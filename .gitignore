@@ -20,6 +20,5 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
- # Heavy data files 
-*.csv 
+ # Heavy data files  
 *.h5
