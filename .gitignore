@@ -22,3 +22,5 @@ rad.json
 TestResults.xml
  # Heavy data files  
 *.h5
+
+*/__pycache__
