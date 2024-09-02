@@ -1,3 +1,4 @@
+
 def save_hdf5(file_name, name, data):
     """!@brief Saves a hdf5 file.
     
@@ -43,3 +44,51 @@ def open_hdf5(file_name, mode='full', i=0):
     if mode == 'range':result = d[i[0]:i[1]]
     file.close()  
     return(result)
+
+
+
+def plot_log_image(image, title=None, logScale=False):
+    import matplotlib.pyplot as plt
+    from matplotlib.colors import LogNorm
+
+    """
+    Plots an image with logarithmic color scale using Astropy and Matplotlib.
+
+    Args:
+        image: The 2D image data as a NumPy array.
+        title: The title to display for the plot (optional).
+    """
+
+    # Create the plot figure
+    plt.figure()
+
+    # Use imshow with LogNorm for logarithmic color scale
+    if logScale:
+        norm = LogNorm(vmin=1E-22, vmax=2E-19)
+        plt.imshow(image, norm=norm)
+    else:
+        plt.imshow(image,vmin=1E-22 , vmax= 2E-19)
+
+
+    # Add title if provided
+    if title:
+        plt.title(title)
+
+    # Set colorbar and label
+    plt.colorbar(label='Pixel Value (Log Scale)')
+
+    # Show the plot
+    plt.show()
+def save_fits(fits_filename, data_cube):
+    #data_cube should be a np array
+    from astropy.io import fits
+    
+
+    # Create a FITS HDU (Header/Data Unit) object with the data
+    hdu = fits.PrimaryHDU(data_cube)
+
+    # Create an HDU list and write it to a FITS file
+    hdulist = fits.HDUList([hdu])
+    hdulist.writeto(fits_filename, overwrite=True)
+
+    print(f"Data has been saved to {fits_filename}")

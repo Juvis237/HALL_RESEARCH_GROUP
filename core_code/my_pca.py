@@ -146,9 +146,21 @@ def get_amps(comps, image):
         
         # flatten the image
         image_flat = image.reshape(np.shape(image)[0]*np.shape(image)[1])
+
+        # compute dot products
+        comp_dot_comp = np.dot(comp.T, comp)
+        image_dot_comp = np.dot(comp.T, image_flat)
         
-        # project the image onto the eigen image
-        a_array[i] = np.dot(comp.T, image_flat)/(np.dot(comp.T, comp))
+        # check for division by zero
+        if comp_dot_comp != 0:
+            # project the image onto the eigen image
+            a_array[i] = image_dot_comp / comp_dot_comp
+        else:
+            # handle case where dot product is zero
+            #print(f"Warning: Zero dot product for component {i}. Setting amplitude to 0.")
+            a_array[i] = 0
+        
+       
     return(a_array)
     
     
