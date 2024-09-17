@@ -1,3 +1,4 @@
+
 import matplotlib
 # matplotlib.use('Agg')
 import sys
@@ -7,7 +8,7 @@ sys.path.append('/home/u31/lia00/research/lia/master_code')
 from my_func import *
 import numpy as np
 import matplotlib.pyplot as plt
-# from matplotlib import cm, colors, rcParams
+from matplotlib import cm, colors, rcParams
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import MultipleLocator
@@ -112,10 +113,10 @@ def make_circle_kerr(ax1,a,i=60,circle_width=1,color='r',label=None,center=False
         if return_stuff==True: return(a_array, b_array)
 
 
-def plot_image(array, fig=None, ax1=None, spin=None, inc=60.0, angle=0, output=None, name=None, norm=True, scale='lin', 
+def plot_image(array,linscale=1.0, linthresh=0.03, fig=None, ax1=None, spin=None, inc=60.0, angle=0, output=None, name=None, norm=True, scale='lin', 
 font=10.56, colorbar=True, norm_num=1, lim_lin=np.array([0,1]), lim_log=False, flip_x=False, 
 horz=False, M=64, x_label=True, y_label=True, colorbar_ticks='set', circle_width=1, 
-zoom=True, tick_color='w', cb_tick_color='k',cmap='gnuplot2', interpolation='bilinear', mass=4.31*10**6,distance=8.3, uas=False):
+zoom=True, tick_color='w', cb_tick_color='k',cmap='gnuplot2', interpolation='bilinear', mass=4.31*10**6,distance=8.3, uas=False  ):
     """!@brief Makes a plot of an image.
     
     This can be used for a single image or for multiple subplots, 
@@ -300,6 +301,32 @@ zoom=True, tick_color='w', cb_tick_color='k',cmap='gnuplot2', interpolation='bil
                 im1=ax1.imshow(array, cmap=cmap, extent=[ext,-ext,-ext,ext], norm=LogNorm(vmin=lim_log[0], vmax=lim_log[1]), origin='lower', interpolation=interpolation)
             else:
                 im1=ax1.imshow(array, cmap=cmap, extent=[-ext,ext,-ext,ext], norm=LogNorm(vmin=lim_log[0], vmax=lim_log[1]), origin='lower', interpolation=interpolation)
+        if colorbar==True:
+            divider1 = make_axes_locatable(ax1)
+            cax1     = divider1.append_axes("right", size="7%", pad=0.05)
+            cbar1    = plt.colorbar(im1, cax=cax1)
+            cbar1.ax.xaxis.set_ticks_position('top')
+            cbar1.ax.tick_params(labelsize=font, color=cb_tick_color, direction='in')
+        elif colorbar== 'top':
+            divider1 = make_axes_locatable(ax1)
+            cax1     = divider1.append_axes("top", size="7%", pad=0.05)
+            cbar1    = plt.colorbar(im1,orientation="horizontal", cax=cax1)
+            cbar1.ax.tick_params(labelsize=font)#, color='w',width=1.5, direction='in')
+            cbar1.ax.xaxis.set_ticks_position('top')
+    elif scale == 'symlog':
+        
+        if type(lim_log) ==bool: 
+            if flip_x == True: 
+                # array = np.fliplr(array)
+                im1=ax1.imshow(array, cmap=cmap, extent=[ext,-ext,-ext,ext], norm=colors.SymLogNorm(linthresh=linthresh,linscale=linscale)       , origin='lower', interpolation=interpolation)
+            else:
+                im1=ax1.imshow(array, cmap=cmap, extent=[-ext,ext,-ext,ext], norm=colors.SymLogNorm(linthresh=linthresh,linscale=linscale)       , origin='lower', interpolation=interpolation)
+        else: 
+            if flip_x == True: 
+                # array = np.fliplr(array)                   
+                im1=ax1.imshow(array, cmap=cmap, extent=[ext,-ext,-ext,ext], norm=colors.SymLogNorm(linthresh=linthresh,linscale=linscale,vmin=-1*lim_log[1], vmax=lim_log[1]), origin='lower', interpolation=interpolation)
+            else:
+                im1=ax1.imshow(array, cmap=cmap, extent=[-ext,ext,-ext,ext], norm=colors.SymLogNorm(linthresh=linthresh,linscale=linscale,vmin=-1*lim_log[1], vmax=lim_log[1]), origin='lower', interpolation=interpolation)
         if colorbar==True:
             divider1 = make_axes_locatable(ax1)
             cax1     = divider1.append_axes("right", size="7%", pad=0.05)
@@ -1685,9 +1712,9 @@ def plot_disp_base(array, fig, ax1, m, colors=np.array(['k','r']), line_style=np
     
     
 def plot_present(array, fig=None, ax1=None, spin=None, theta=60.0, output=None, name=None, norm=True, scale='lin', 
-	font=10.56, colorbar='bottom', norm_num=1, lim_lin=np.array([0,1]), lim_log=False, flip_x=False, 
-	horz=False, M=64, x_label=False, y_label=False, colorbar_ticks='set', circle_width=1, 
-	zoom=True, tick_color='w', cb_tick_color='k', label_color='w',name_size=None, scale_bar=True,colormap='gist_heat', gamma=.2,no_border=False):
+font=10.56, colorbar='bottom', norm_num=1, lim_lin=np.array([0,1]), lim_log=False, flip_x=False, 
+horz=False, M=64, x_label=False, y_label=False, colorbar_ticks='set', circle_width=1, 
+zoom=True, tick_color='w', cb_tick_color='k', label_color='w',name_size=None, scale_bar=True,colormap='gist_heat', gamma=.2,no_border=False):
     if name_size==None: label_font_sz = font
     else: label_font_sz = name_size
     make_fig = False
